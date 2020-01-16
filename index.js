@@ -33,8 +33,8 @@ const sendEmail = ({
   });
 
   const mailOptions = {
-    from: "wesleycct@gmail.com",
-    to: "", //"suporte.rjo@viaband.net.br",
+    from: mailInfo.from,
+    to: mailInfo.sendTo,
     subject: subject,
     html: htmlMessage
   };
