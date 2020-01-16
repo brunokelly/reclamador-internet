@@ -3,6 +3,8 @@ const nodemailer = require("nodemailer");
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 
+const personalInfo = require("./personalInfo.json");
+
 const getMessage = require("./htmlMessage");
 const log = require("./utils/log");
 
@@ -20,18 +22,19 @@ const sendEmail = ({
   htmlMessage,
   subject = "Velocidade abaixo da contratada"
 }) => {
+  const mailInfo = personalInfo.mail;
   const transporter = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
+    host: mailInfo.host,
+    port: mailInfo.port,
     auth: {
-      user: "1bba2b705a1b8c",
-      pass: "4e90767f264ed3"
+      user: mailInfo.user,
+      pass: mailInfo.password
     }
   });
 
   const mailOptions = {
     from: "wesleycct@gmail.com",
-    to: "wesleycct@gmail.com", //"suporte.rjo@viaband.net.br",
+    to: "", //"suporte.rjo@viaband.net.br",
     subject: subject,
     html: htmlMessage
   };
@@ -52,8 +55,6 @@ async function doAction({
 }) {
   log("Iniciando Teste!");
   const { download, share } = await startTest();
-
-  const personalInfo = require("./personalInfo.json");
 
   const downloadInMegaBits = Number(
     (Number(download) / 1000000).toPrecision(4)
@@ -77,7 +78,9 @@ async function doAction({
 
   log("Enviando e-mail...");
 
-  const htmlMessage = getMessage(personalInfo, {
+  const user = personalInfo.user;
+
+  const htmlMessage = getMessage(user, {
     desiredDownload: desiredSpeed,
     downloadInMegaBits,
     downloadInPercentage,
